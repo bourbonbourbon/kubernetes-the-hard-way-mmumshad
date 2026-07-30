@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 #
-# Generate a set of scripts from the documentation by reading markdown comments to determine target hosts
+# Generate a set of scripts from the documentation by reading
+# markdown comments to determine target hosts
 # and extracting all scripts fenced by ```bash
 #
 #
 # Point it to the docs directory containing the lab documents
 # It will create shell scripts in docs/../quick-steps
-# THe scripts are ordered by lab number, then a, b, c where a lab requires you to use more than one host,
+# The scripts are ordered by lab number, then a, b, c where a lab
+# requires you to use more than one host,
 # and the filename indicates which hosts to run
 #
 # Hosts and other things are determined from markdown comments.
@@ -16,9 +18,7 @@ import re
 import os
 import glob
 import codecs
-import argparse
 from enum import Enum
-from sys import exit
 
 class State(Enum):
     NONE = 0
@@ -29,7 +29,8 @@ docs_path = os.path.abspath(os.path.join(this_file_dir, '../docs'))
 
 if not os.path.isdir(docs_path):
     print (f'Expected "docs" at: {docs_path}')
-    exit(1)
+    import sys
+    sys.exit(1)
 
 qs_path = os.path.abspath(os.path.join(this_file_dir, '../quick-steps'))
 
@@ -49,12 +50,12 @@ script_close = '\n}'.encode('utf-8')
 current_host = None
 file_nos = []
 
-def write_script(filename: str, script: list):
+def write_script(filename: str, w_script: list):
     path = os.path.join(qs_path, filename)
-    with open(path, "wb") as f:
-        f.write(script_open)
-        f.write(newline.join(script).encode('utf-8'))
-        f.write(script_close)
+    with open(path, "wb") as w_f:
+        w_f.write(script_open)
+        w_f.write(newline.join(w_script).encode('utf-8'))
+        w_f.write(script_close)
     print(f'-> {path}')
 
 output_file_no = 1
