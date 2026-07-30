@@ -45,7 +45,7 @@ This does the below:
     > These are the default settings. These can be changed in the Vagrant file
 
 - Add's a DNS entry to each of the nodes to access internet
-    > DNS: 8.8.8.8
+    > DNS: 1.1.1.1
 
 - Sets required kernel settings for kubernetes networking to function correctly.
 

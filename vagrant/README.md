@@ -11,9 +11,10 @@ A few prerequisites are handled by the VM provisioning steps.
 
 ## DNS settings
 
-1. Set the default DNS server to be Google, as we know this always works.
+1. Set the default DNS server to Cloudflare 1.1.1.1 DNS
 1. Set up `/etc/hosts` so that all the VMs can resolve each other
 
 ## Other settings
 
 1. Install configs for `vim` and `tmux` on controlplane01
+2. Configured /etc/bash.bashrc
