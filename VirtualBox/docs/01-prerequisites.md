@@ -43,7 +43,6 @@ The labs have been configured with the following networking defaults. It is not 
 
 ```bash
 vagrant destroy -f
-export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
 vagrant up
 ```
 

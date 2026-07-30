@@ -21,7 +21,6 @@ This will not work if you have less than 8GB of RAM.
 Run Vagrant up:
 
 ```bash
-export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
 vagrant up
 ```
 
@@ -93,7 +92,6 @@ vagrant destroy \<vm\>
 Then re-provision. Only the missing VMs will be re-provisioned
 
 ```bash
-export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
 vagrant up
 ```
 
@@ -111,7 +109,6 @@ In such cases delete the VM, then delete the VM folder and then re-provision, e.
 ```bash
 vagrant destroy node02
 rmdir "\<path-to-vm-folder\>\kubernetes-ha-node02
-export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
 vagrant up
 ```
 
@@ -122,7 +119,7 @@ This will most likely happen at "Waiting for machine to reboot"
 1. Hit `CTRL+C`
 1. Kill any running `ruby` process, or Vagrant will complain.
 1. Destroy the VM that got stuck: `vagrant destroy \<vm\>`
-1. Re-provision. It will pick up where it left off: `export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1; vagrant up`
+1. Re-provision. It will pick up where it left off: `vagrant up`
 
 # Pausing the Environment
 
@@ -137,7 +134,6 @@ vagrant halt
 To power on again:
 
 ```bash
-export VAGRANT_DISABLE_VBOXSYMLINKCREATE=1
 vagrant up
 ```
 
