@@ -1,4 +1,6 @@
 #!/bin/bash
+# shellcheck disable=SC2059
+# shellcheck disable=SC2034
 set -e
 #set -x
 
@@ -104,18 +106,18 @@ check_cert_and_key()
     local cert="${CERT_LOCATION}/$1.crt"
     local key="${CERT_LOCATION}/$1.key"
 
-    if [ -z $cert -o -z $key ]
+    if [ -z "$cert" ] || [ -z "$key" ]
         then
             printf "${FAILED}cert and/or key not present in ${CERT_LOCATION}. Perhaps you missed a copy step\n${NC}"
             exit 1
-        elif [ -f $cert -a -f $key ]
+        elif [ -f "$cert" ] && [ -f "$key" ]
             then
                 printf "${NC}${name} cert and key found, verifying the authenticity\n"
-                CERT_SUBJECT=$(sudo openssl x509 -in $cert -text | grep "Subject: CN"| tr -d " ")
-                CERT_ISSUER=$(sudo openssl x509 -in $cert -text | grep "Issuer: CN"| tr -d " ")
-                CERT_MD5=$(sudo openssl x509 -noout -modulus -in $cert | openssl md5| awk '{print $2}')
-                KEY_MD5=$(sudo openssl rsa -noout -modulus -in $key | openssl md5| awk '{print $2}')
-                if [ $CERT_SUBJECT == "${subject}" ] && [ $CERT_ISSUER == "${issuer}" ] && [ $CERT_MD5 == $KEY_MD5 ]
+                CERT_SUBJECT=$(sudo openssl x509 -in "$cert" -text | grep "Subject: CN"| tr -d " ")
+                CERT_ISSUER=$(sudo openssl x509 -in "$cert" -text | grep "Issuer: CN"| tr -d " ")
+                CERT_MD5=$(sudo openssl x509 -noout -modulus -in "$cert" | openssl md5| awk '{print $2}')
+                KEY_MD5=$(sudo openssl rsa -noout -modulus -in "$key" | openssl md5| awk '{print $2}')
+                if [ "$CERT_SUBJECT" == "${subject}" ] && [ "$CERT_ISSUER" == "${issuer}" ] && [ "$CERT_MD5" == "$KEY_MD5" ]
                     then
                         printf "${SUCCESS}${name} cert and key are correct\n${NC}"
                     else
@@ -139,17 +141,17 @@ check_cert_only()
     # Worker-2 auto cert is a .pem
     [ -f "${CERT_LOCATION}/$1.pem" ] && cert="${CERT_LOCATION}/$1.pem"
 
-    if [ -z $cert ]
+    if [ -z "$cert" ]
         then
             printf "${FAILED}cert not present in ${CERT_LOCATION}. Perhaps you missed a copy step\n${NC}"
             exit 1
-        elif [ -f $cert ]
+        elif [ -f "$cert" ]
             then
                 printf "${NC}${name} cert found, verifying the authenticity\n"
-                CERT_SUBJECT=$(sudo openssl x509 -in $cert -text | grep "Subject: "| tr -d " ")
-                CERT_ISSUER=$(sudo openssl x509 -in $cert -text | grep "Issuer: CN"| tr -d " ")
-                CERT_MD5=$(sudo openssl x509 -noout -modulus -in $cert | openssl md5| awk '{print $2}')
-                if [ $CERT_SUBJECT == "${subject}" ] && [ $CERT_ISSUER == "${issuer}" ]
+                CERT_SUBJECT=$(sudo openssl x509 -in "$cert" -text | grep "Subject: "| tr -d " ")
+                CERT_ISSUER=$(sudo openssl x509 -in "$cert" -text | grep "Issuer: CN"| tr -d " ")
+                CERT_MD5=$(sudo openssl x509 -noout -modulus -in "$cert" | openssl md5| awk '{print $2}')
+                if [ "$CERT_SUBJECT" == "${subject}" ] && [ "$CERT_ISSUER" == "${issuer}" ]
                     then
                         printf "${SUCCESS}${name} cert is correct\n${NC}"
                     else
@@ -183,7 +185,7 @@ check_cert_adminkubeconfig()
                 ADMINKUBECONFIG_CERT_MD5=$(cat $ADMINKUBECONFIG | grep "client-certificate-data:" | awk '{print $2}' | base64 --decode | sudo openssl x509 -noout | openssl md5 | awk '{print $2}')
                 ADMINKUBECONFIG_KEY_MD5=$(cat $ADMINKUBECONFIG | grep "client-key-data" | awk '{print $2}' | base64 --decode | openssl rsa -noout | openssl md5 | awk '{print $2}')
                 ADMINKUBECONFIG_SERVER=$(cat $ADMINKUBECONFIG | grep "server:"| awk '{print $2}')
-                if [ $ADMINKUBECONFIG_SUBJECT == "Subject:CN=admin,O=system:masters" ] && [ $ADMINKUBECONFIG_ISSUER == "Issuer:CN=KUBERNETES-CA,O=Kubernetes" ] && [ $ADMINKUBECONFIG_CERT_MD5 == $ADMINKUBECONFIG_KEY_MD5 ] && [ $ADMINKUBECONFIG_SERVER == "https://127.0.0.1:6443" ]
+                if [ "$ADMINKUBECONFIG_SUBJECT" == "Subject:CN=admin,O=system:masters" ] && [ "$ADMINKUBECONFIG_ISSUER" == "Issuer:CN=KUBERNETES-CA,O=Kubernetes" ] && [ "$ADMINKUBECONFIG_CERT_MD5" == "$ADMINKUBECONFIG_KEY_MD5" ] && [ "$ADMINKUBECONFIG_SERVER" == "https://127.0.0.1:6443" ]
                     then
                         printf "${SUCCESS}admin kubeconfig cert and key are correct\n"
                     else
@@ -202,7 +204,7 @@ get_kubeconfig_cert_path()
     local kubeconfig=$1
     local cert_field=$2
 
-    sudo cat $kubeconfig | grep cert_field | awk '{print $2}'
+    sudo cat "$kubeconfig" | grep cert_field | awk '{print $2}'
 }
 
 check_kubeconfig()
@@ -213,13 +215,13 @@ check_kubeconfig()
     local kubeconfig="${location}/${name}.kubeconfig"
 
     echo "Checking $kubeconfig"
-    check_kubeconfig_exists $name $location
-    ca=$(get_kubeconfig_cert_path $kubeconfig "certificate-authority")
-    cert=$(get_kubeconfig_cert_path $kubeconfig "client-certificate")
-    key=$(get_kubeconfig_cert_path $kubeconfig "client-key")
-    server=$(sudo cat $kubeconfig | grep server | awk '{print $2}')
+    check_kubeconfig_exists "$name" "$location"
+    ca=$(get_kubeconfig_cert_path "$kubeconfig" "certificate-authority")
+    cert=$(get_kubeconfig_cert_path "$kubeconfig" "client-certificate")
+    key=$(get_kubeconfig_cert_path "$kubeconfig" "client-key")
+    server=$(sudo cat "$kubeconfig" | grep server | awk '{print $2}')
 
-    if [ -f "$ca"]
+    if [ -f "$ca" ]
     then
         printf "${SUCCESS}Path to CA certificate is correct${NC}\n"
     else
@@ -227,7 +229,7 @@ check_kubeconfig()
         exit 1
     fi
 
-    if [ -f "$cert"]
+    if [ -f "$cert" ]
     then
         printf "${SUCCESS}Path to client certificate is correct${NC}\n"
     else
@@ -235,7 +237,7 @@ check_kubeconfig()
         exit 1
     fi
 
-    if [ -f "$key"]
+    if [ -f "$key" ]
     then
         printf "${SUCCESS}Path to client key is correct${NC}\n"
     else
@@ -296,8 +298,8 @@ check_systemd_etcd()
                    ETCD_CA_CERT=/etc/etcd/ca.crt
                    ETCDCERT=/etc/etcd/etcd-server.crt
                    ETCDKEY=/etc/etcd/etcd-server.key
-                if [ $CERT_FILE == $ETCDCERT ] && [ $KEY_FILE == $ETCDKEY ] && [ $PEER_CERT_FILE == $ETCDCERT ] && [ $PEER_KEY_FILE == $ETCDKEY ] && \
-                   [ $TRUSTED_CA_FILE == $ETCD_CA_CERT ] && [ $PEER_TRUSTED_CA_FILE = $ETCD_CA_CERT ]
+                if [ "$CERT_FILE" == $ETCDCERT ] && [ "$KEY_FILE" == $ETCDKEY ] && [ "$PEER_CERT_FILE" == $ETCDCERT ] && [ "$PEER_KEY_FILE" == $ETCDKEY ] && \
+                   [ "$TRUSTED_CA_FILE" == $ETCD_CA_CERT ] && [ "$PEER_TRUSTED_CA_FILE" = $ETCD_CA_CERT ]
                     then
                         printf "${SUCCESS}ETCD certificate, ca and key files are correct under systemd service\n${NC}"
                     else
@@ -305,8 +307,8 @@ check_systemd_etcd()
                         exit 1
                 fi
 
-                if [ $IAP_URL == "https://$PRIMARY_IP:2380" ] && [ $LP_URL == "https://$PRIMARY_IP:2380"  ] && [ $LC_URL == "https://$PRIMARY_IP:2379,https://127.0.0.1:2379" ] && \
-                   [ $AC_URL == "https://$PRIMARY_IP:2379" ]
+                if [ "$IAP_URL" == "https://$PRIMARY_IP:2380" ] && [ "$LP_URL" == "https://$PRIMARY_IP:2380"  ] && [ "$LC_URL" == "https://$PRIMARY_IP:2379,https://127.0.0.1:2379" ] && \
+                   [ "$AC_URL" == "https://$PRIMARY_IP:2379" ]
                     then
                         printf "${SUCCESS}ETCD initial-advertise-peer-urls, listen-peer-urls, listen-client-urls, advertise-client-urls are correct\n${NC}"
                     else
@@ -349,10 +351,10 @@ check_systemd_api()
                 SACERT="${PKI}/service-account.crt"
                 KCCERT="${PKI}/apiserver-kubelet-client.crt"
                 KCKEY="${PKI}/apiserver-kubelet-client.key"
-                if [ $ADVERTISE_ADDRESS == $PRIMARY_IP ] && [ $CLIENT_CA_FILE == $CACERT ] && [ $ETCD_CA_FILE == $CACERT ] && \
-                   [ $ETCD_CERT_FILE == "${PKI}/etcd-server.crt" ] && [ $ETCD_KEY_FILE == "${PKI}/etcd-server.key" ] && \
-                   [ $KUBELET_CERTIFICATE_AUTHORITY == $CACERT ] && [ $KUBELET_CLIENT_CERTIFICATE == $KCCERT ] && [ $KUBELET_CLIENT_KEY == $KCKEY ] && \
-                   [ $SERVICE_ACCOUNT_KEY_FILE == $SACERT ] && [ $TLS_CERT_FILE == $APICERT ] && [ $TLS_PRIVATE_KEY_FILE == $APIKEY ]
+                if [ "$ADVERTISE_ADDRESS" == "$PRIMARY_IP" ] && [ "$CLIENT_CA_FILE" == $CACERT ] && [ "$ETCD_CA_FILE" == $CACERT ] && \
+                   [ "$ETCD_CERT_FILE" == "${PKI}/etcd-server.crt" ] && [ "$ETCD_KEY_FILE" == "${PKI}/etcd-server.key" ] && \
+                   [ "$KUBELET_CERTIFICATE_AUTHORITY" == $CACERT ] && [ "$KUBELET_CLIENT_CERTIFICATE" == $KCCERT ] && [ "$KUBELET_CLIENT_KEY" == $KCKEY ] && \
+                   [ "$SERVICE_ACCOUNT_KEY_FILE" == $SACERT ] && [ "$TLS_CERT_FILE" == $APICERT ] && [ "$TLS_PRIVATE_KEY_FILE" == $APIKEY ]
                     then
                         printf "${SUCCESS}kube-apiserver advertise-address/ client-ca-file/ etcd-cafile/ etcd-certfile/ etcd-keyfile/ kubelet-certificate-authority/ kubelet-client-certificate/ kubelet-client-key/ service-account-key-file/ tls-cert-file/ tls-private-key-file are correct\n${NC}"
                     else
@@ -386,8 +388,8 @@ check_systemd_kcm()
                 ROOT_CA_FILE=$(systemctl cat kube-controller-manager.service | grep "\--root-ca-file" | awk '{print $1}' | cut -d "=" -f2)
                 SERVICE_ACCOUNT_PRIVATE_KEY_FILE=$(systemctl cat kube-controller-manager.service | grep "\--service-account-private-key-file" | awk '{print $1}' | cut -d "=" -f2)
 
-                if [ $CLUSTER_SIGNING_CERT_FILE == $CACERT ] && [ $CLUSTER_SIGNING_KEY_FILE == $CAKEY ] && [ $KUBECONFIG == $KCMKUBECONFIG ] && \
-                   [ $ROOT_CA_FILE == $CACERT ] && [ $SERVICE_ACCOUNT_PRIVATE_KEY_FILE == $SAKEY ]
+                if [ "$CLUSTER_SIGNING_CERT_FILE" == $CACERT ] && [ "$CLUSTER_SIGNING_KEY_FILE" == $CAKEY ] && [ "$KUBECONFIG" == $KCMKUBECONFIG ] && \
+                   [ "$ROOT_CA_FILE" == $CACERT ] && [ "$SERVICE_ACCOUNT_PRIVATE_KEY_FILE" == $SAKEY ]
                     then
                         printf "${SUCCESS}kube-controller-manager cluster-signing-cert-file, cluster-signing-key-file, kubeconfig, root-ca-file, service-account-private-key-file  are correct\n${NC}"
                     else
@@ -416,7 +418,7 @@ check_systemd_ks()
 
                 KUBECONFIG=$(systemctl cat kube-scheduler.service | grep "\--kubeconfig"| awk '{print $1}'| cut -d "=" -f2)
 
-                if [ $KUBECONFIG == $KSKUBECONFIG ]
+                if [ "$KUBECONFIG" == $KSKUBECONFIG ]
                     then
                         printf "${SUCCESS}kube-scheduler --kubeconfig is correct\n${NC}"
                     else
@@ -446,10 +448,10 @@ else
         echo "  5. Verify kubeconfigs and PKI on node02 Node after step 11"
         echo
         echo -n "Please select one of the above options: "
-        read choice
+        read -r choice
 
         [ -z "$choice" ] && continue
-        [ $choice -gt 0 -a $choice -lt 6 ] && break
+        [ "$choice" -gt 0 ] && [ "$choice" -lt 6 ] && break
     done
 fi
 
@@ -469,7 +471,7 @@ SUBJ_APIKC="Subject:CN=kube-apiserver-kubelet-client,O=system:masters"
 case $choice in
 
   1)
-    if ! [ "${HOST}" = "controlplane01" -o "${HOST}" = "controlplane02" ]
+    if ! [ "${HOST}" = "controlplane01" ] || [ "${HOST}" = "controlplane02" ]
     then
         printf "${FAILED}Must run on controlplane01 or controlplane02${NC}\n"
         exit 1
@@ -478,57 +480,57 @@ case $choice in
     echo -e "The selected option is $choice, proceeding the certificate verification of Master node"
 
     CERT_LOCATION=$HOME
-    check_cert_and_key "ca" $SUBJ_CA $CERT_ISSUER
-    check_cert_and_key "kube-apiserver" $SUBJ_API $CERT_ISSUER
-    check_cert_and_key "kube-controller-manager" $SUBJ_KCM $CERT_ISSUER
-    check_cert_and_key "kube-scheduler" $SUBJ_KS $CERT_ISSUER
-    check_cert_and_key "service-account" $SUBJ_SA $CERT_ISSUER
-    check_cert_and_key "apiserver-kubelet-client" $SUBJ_APIKC $CERT_ISSUER
-    check_cert_and_key "etcd-server" $SUBJ_ETCD $CERT_ISSUER
+    check_cert_and_key "ca" $SUBJ_CA "$CERT_ISSUER"
+    check_cert_and_key "kube-apiserver" $SUBJ_API "$CERT_ISSUER"
+    check_cert_and_key "kube-controller-manager" $SUBJ_KCM "$CERT_ISSUER"
+    check_cert_and_key "kube-scheduler" $SUBJ_KS "$CERT_ISSUER"
+    check_cert_and_key "service-account" $SUBJ_SA "$CERT_ISSUER"
+    check_cert_and_key "apiserver-kubelet-client" $SUBJ_APIKC "$CERT_ISSUER"
+    check_cert_and_key "etcd-server" $SUBJ_ETCD "$CERT_ISSUER"
 
     if [ "${HOST}" = "controlplane01" ]
     then
-        check_cert_and_key "admin" $SUBJ_ADMIN $CERT_ISSUER
-        check_cert_and_key "kube-proxy" $SUBJ_KP $CERT_ISSUER
+        check_cert_and_key "admin" $SUBJ_ADMIN "$CERT_ISSUER"
+        check_cert_and_key "kube-proxy" $SUBJ_KP "$CERT_ISSUER"
     fi
     ;;
 
   2)
-    if ! [ "${HOST}" = "controlplane01" -o "${HOST}" = "controlplane02" ]
+    if ! [ "${HOST}" = "controlplane01" ] || [ "${HOST}" = "controlplane02" ]
     then
         printf "${FAILED}Must run on controlplane01 or controlplane02${NC}\n"
         exit 1
     fi
 
     check_cert_adminkubeconfig
-    check_kubeconfig_exists "kube-controller-manager" $HOME
-    check_kubeconfig_exists "kube-scheduler" $HOME
+    check_kubeconfig_exists "kube-controller-manager" "$HOME"
+    check_kubeconfig_exists "kube-scheduler" "$HOME"
 
     if [ "${HOST}" = "controlplane01" ]
     then
-        check_kubeconfig_exists "kube-proxy" $HOME
+        check_kubeconfig_exists "kube-proxy" "$HOME"
     fi
     ;;
 
   3)
-    if ! [ "${HOST}" = "controlplane01" -o "${HOST}" = "controlplane02" ]
+    if ! [ "${HOST}" = "controlplane01" ] || [ "${HOST}" = "controlplane02" ]
     then
         printf "${FAILED}Must run on controlplane01 or controlplane02${NC}\n"
         exit 1
     fi
 
     CERT_LOCATION=/etc/etcd
-    check_cert_only "ca" $SUBJ_CA $CERT_ISSUER
-    check_cert_and_key "etcd-server" $SUBJ_ETCD $CERT_ISSUER
+    check_cert_only "ca" $SUBJ_CA "$CERT_ISSUER"
+    check_cert_and_key "etcd-server" $SUBJ_ETCD "$CERT_ISSUER"
 
     CERT_LOCATION=/var/lib/kubernetes/pki
-    check_cert_and_key "ca" $SUBJ_CA $CERT_ISSUER
-    check_cert_and_key "kube-apiserver" $SUBJ_API $CERT_ISSUER
-    check_cert_and_key "kube-controller-manager" $SUBJ_KCM $CERT_ISSUER
-    check_cert_and_key "kube-scheduler" $SUBJ_KS $CERT_ISSUER
-    check_cert_and_key "service-account" $SUBJ_SA $CERT_ISSUER
-    check_cert_and_key "apiserver-kubelet-client" $SUBJ_APIKC $CERT_ISSUER
-    check_cert_and_key "etcd-server" $SUBJ_ETCD $CERT_ISSUER
+    check_cert_and_key "ca" $SUBJ_CA "$CERT_ISSUER"
+    check_cert_and_key "kube-apiserver" $SUBJ_API "$CERT_ISSUER"
+    check_cert_and_key "kube-controller-manager" $SUBJ_KCM "$CERT_ISSUER"
+    check_cert_and_key "kube-scheduler" $SUBJ_KS "$CERT_ISSUER"
+    check_cert_and_key "service-account" $SUBJ_SA "$CERT_ISSUER"
+    check_cert_and_key "apiserver-kubelet-client" $SUBJ_APIKC "$CERT_ISSUER"
+    check_cert_and_key "etcd-server" $SUBJ_ETCD "$CERT_ISSUER"
 
     check_kubeconfig "kube-controller-manager" "/var/lib/kubernetes" "https://127.0.0.1:6443"
     check_kubeconfig "kube-scheduler" "/var/lib/kubernetes" "https://127.0.0.1:6443"
@@ -547,9 +549,9 @@ case $choice in
     fi
 
     CERT_LOCATION=/var/lib/kubernetes/pki
-    check_cert_only "ca" $SUBJ_CA $CERT_ISSUER
-    check_cert_and_key "kube-proxy" $SUBJ_KP $CERT_ISSUER
-    check_cert_and_key "node01" "Subject:CN=system:node:node01,O=system:nodes" $CERT_ISSUER
+    check_cert_only "ca" $SUBJ_CA "$CERT_ISSUER"
+    check_cert_and_key "kube-proxy" $SUBJ_KP "$CERT_ISSUER"
+    check_cert_and_key "node01" "Subject:CN=system:node:node01,O=system:nodes" "$CERT_ISSUER"
     check_kubeconfig "kube-proxy" "/var/lib/kube-proxy" "https://${LOADBALANCER}:6443"
     check_kubeconfig "kubelet" "/var/lib/kubelet" "https://${LOADBALANCER}:6443"
     ;;
@@ -562,11 +564,11 @@ case $choice in
     fi
 
     CERT_LOCATION=/var/lib/kubernetes/pki
-    check_cert_only "ca" $SUBJ_CA $CERT_ISSUER
-    check_cert_and_key "kube-proxy" $SUBJ_KP $CERT_ISSUER
+    check_cert_only "ca" $SUBJ_CA "$CERT_ISSUER"
+    check_cert_and_key "kube-proxy" $SUBJ_KP "$CERT_ISSUER"
 
     CERT_LOCATION=/var/lib/kubelet/pki
-    check_cert_only "kubelet-client-current" "Subject:O=system:nodes,CN=system:node:node02" $CERT_ISSUER
+    check_cert_only "kubelet-client-current" "Subject:O=system:nodes,CN=system:node:node02" "$CERT_ISSUER"
     check_kubeconfig "kube-proxy" "/var/lib/kube-proxy" "https://${LOADBALANCER}:6443"
     ;;
 
