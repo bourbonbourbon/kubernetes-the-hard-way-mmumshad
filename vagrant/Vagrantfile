@@ -43,8 +43,8 @@ def setup_dns(node)
   # Set up /etc/hosts
   # node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh" do |s|
   #   s.args = ["enp0s8", node.vm.hostname]
+  # end
   node.vm.provision "setup-hosts", :type => "shell", :path => "ubuntu/vagrant/setup-hosts.sh"
-  end
   # Set up DNS resolution
   node.vm.provision "setup-dns", type: "shell", :path => "ubuntu/update-dns.sh"
 end
