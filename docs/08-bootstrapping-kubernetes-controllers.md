@@ -268,7 +268,7 @@ In this section you will provision an external load balancer to front the Kubern
 
 A NLB operates at [layer 4](https://en.wikipedia.org/wiki/OSI_model#Layer_4:_Transport_layer) (TCP) meaning it passes the traffic straight through to the back end servers unfettered and does not interfere with the TLS process, leaving this to the Kube API servers.
 
-Login to `loadbalancer` instance using `vagrant ssh` (or `multipass shell` on Apple Silicon).
+Login to `loadbalancer` instance using `vagrant ssh`.
 
 [//]: # (host:loadbalancer)
 

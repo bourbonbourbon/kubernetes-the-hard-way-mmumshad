@@ -24,8 +24,6 @@ body:
       options:
       - "Please Select -->"
       - Windows (10 or 11)
-      - Intel Mac
-      - Apple Silicon Mac (M1/M2/M3)
       - Other (specify in What Happened box)
       default: 0
     validations:

@@ -1,6 +1,6 @@
 # Kubernetes The Hard Way on VirtualBox
 
-Begin here if your machine is Windows or Intel Mac. For these machines, we use VirtualBox as the hypervisor, and Vagrant to provision the Virtual Machines.
+Begin here if your machine is Windows. For these machines, we use VirtualBox as the hypervisor, and Vagrant to provision the Virtual Machines.
 
 This should also work with Linux (as the host operating system, not running in a VM), but it not so far tested.
 
@@ -20,7 +20,6 @@ This lab provisions 5 VMs on your workstation. That's a lot of compute resource!
 Download and install [VirtualBox](https://www.virtualbox.org/wiki/Downloads) on any one of the supported platforms:
 
  - Windows
- - Intel Mac
  - Linux
 
 ### Vagrant
@@ -34,7 +33,6 @@ Download and install [Vagrant](https://www.vagrantup.com/) on your platform.
 - Debian/Ubuntu
 - CentOS
 - Linux
-- Intel Mac
 
 This tutorial assumes that you have also installed Vagrant.
 
@@ -76,7 +74,7 @@ To change this, open all the `.md` files in the [docs](../../docs/) directory in
 `SERVICE_CIDR=10.96.0.0/16`<br>
 with the new CDIR range.  This should not overlap any of the other network settings.
 
-Additionally edit line 164 of [coredns.yaml](../../deployments/coredns.yaml) to set the new DNS service address (should still end with `.10`)
+Additionally edit line 184 of [coredns.yaml](../../deployments/coredns.yaml) to set the new DNS service address (should still end with `.10`)
 
 ## Running Commands in Parallel with tmux
 

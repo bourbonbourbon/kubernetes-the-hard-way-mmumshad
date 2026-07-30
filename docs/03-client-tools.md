@@ -1,12 +1,10 @@
 # Installing the Client Tools
 
-From this point on, the steps are *exactly* the same for VirtualBox and Apple Silicon as it is now about configuring Kubernetes itself on the Linux hosts which you have now provisioned.
-
-Begin by logging into `controlplane01` using `vagrant ssh` for VirtualBox, or `multipass shell` for Apple Silicon.
+Begin by logging into `controlplane01` using `vagrant ssh` for VirtualBox.
 
 ## Access all VMs
 
-Here we create an SSH key pair for the user who we are logged in as (this is `vagrant` on VirtualBox, `ubuntu` on Apple Silicon). We will copy the public key of this pair to the other controlplane and both workers to permit us to use password-less SSH (and SCP) go get from `controlplane01` to these other nodes in the context of the user which exists on all nodes.
+Here we create an SSH key pair for the user who we are logged in as (this is `vagrant` on VirtualBox). We will copy the public key of this pair to the other controlplane and both workers to permit us to use password-less SSH (and SCP) go get from `controlplane01` to these other nodes in the context of the user which exists on all nodes.
 
 Generate SSH key pair on `controlplane01` node:
 
@@ -26,11 +24,10 @@ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
 Copy the key to the other hosts. You will be asked to enter a password for each of the `ssh-copy-id` commands. The password is:
 * VirtualBox - `vagrant`
-* Apple Silicon: `ubuntu`
 
 The option `-o StrictHostKeyChecking=no` tells it not to ask if you want to connect to a previously unknown host. Not best practice in the real world, but speeds things up here.
 
-`$(whoami)` selects the appropriate user name to connect to the remote VMs. On VirtualBox this evaluates to `vagrant`; on Apple Silicon it is `ubuntu`.
+`$(whoami)` selects the appropriate user name to connect to the remote VMs. On VirtualBox this evaluates to `vagrant`.
 
 ```bash
 ssh-copy-id -o StrictHostKeyChecking=no $(whoami)@controlplane02
@@ -72,7 +69,7 @@ Reference: [https://kubernetes.io/docs/tasks/tools/install-kubectl/](https://kub
 
 We will be using `kubectl` early on to generate `kubeconfig` files for the controlplane components.
 
-The environment variable `ARCH` is pre-set during VM deployment according to whether using VirtualBox (`amd64`) or Apple Silicon (`arm64`) to ensure the correct version of this and later software is downloaded for your machine architecture.
+The environment variable `ARCH` is pre-set during VM deployment according to whether using VirtualBox (`amd64`) to ensure the correct version of this and later software is downloaded for your machine architecture.
 
 ### Linux
 
@@ -98,4 +95,4 @@ Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
 ```
 
 Next: [Certificate Authority](04-certificate-authority.md)<br>
-Prev: Compute Resources ([VirtualBox](../VirtualBox/docs/02-compute-resources.md)), ([Apple Silicon](../apple-silicon/docs/02-compute-resources.md))
+Prev: Compute Resources ([VirtualBox](../VirtualBox/docs/02-compute-resources.md))
