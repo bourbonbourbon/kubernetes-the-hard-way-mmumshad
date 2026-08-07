@@ -108,6 +108,7 @@ Vagrant.configure("2") do |config|
         vb.name = "kubernetes-ha-controlplane-#{i}"
         vb.memory = RESOURCES["control"][i > 2 ? 2 : i]["ram"]
         vb.cpus = RESOURCES["control"][i > 2 ? 2 : i]["cpu"]
+        vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
       end
       node.vm.hostname = "controlplane0#{i}"
       node.vm.network :private_network, ip: IP_NW + "#{MASTER_IP_START + i}"
@@ -129,6 +130,7 @@ Vagrant.configure("2") do |config|
       vb.name = "kubernetes-ha-lb"
       vb.memory = 512
       vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
     end
     node.vm.hostname = "loadbalancer"
     node.vm.network :private_network, ip: IP_NW + "#{LB_IP_START}"
@@ -146,6 +148,7 @@ Vagrant.configure("2") do |config|
         vb.name = "kubernetes-ha-node-#{i}"
         vb.memory = RESOURCES["worker"]["ram"]
         vb.cpus = RESOURCES["worker"]["cpu"]
+        vb.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
       end
       node.vm.hostname = "node0#{i}"
       node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + i}"
