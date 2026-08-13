@@ -204,7 +204,7 @@ get_kubeconfig_cert_path()
     local kubeconfig=$1
     local cert_field=$2
 
-    sudo cat "$kubeconfig" | grep cert_field | awk '{print $2}'
+    sudo cat "$kubeconfig" | grep "$cert_field" | awk '{print $2}'
 }
 
 check_kubeconfig()
