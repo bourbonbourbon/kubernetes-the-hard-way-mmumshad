@@ -50,6 +50,6 @@ We will be building the following:
 
 * If you are using Windows start [here](./VirtualBox/docs/01-prerequisites.md) to deploy VirtualBox and Vagrant.
 
-[DeepWiki](https://deepwiki.com/mmumshad/kubernetes-the-hard-way)
+[DeepWiki](./deepwiki/README.md)
 
 
