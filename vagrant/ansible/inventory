@@ -1,0 +1,6 @@
+[all]
+node01
+node02
+loadbalancer
+controlplane01
+controlplane02

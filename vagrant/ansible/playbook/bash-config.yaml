@@ -1,0 +1,10 @@
+---
+- name: Add exit alias to global bashrc
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure alias e='exit' is present in /etc/bash.bashrc
+      ansible.builtin.lineinfile:
+        path: /etc/bash.bashrc
+        line: "alias e='exit'"
+        state: present

@@ -1,0 +1,28 @@
+CA ca.csr file expires in 1000 days
+
+shutdown order node -> lb -> controlplane
+
+all the kubenetes services below are themselves cluster users
+
+encryption config using identity: {} i.e., plain text encryption
+
+using old etcd version v3.5.9
+
+```
+Warning: v1 ComponentStatus is deprecated in v1.19+
+NAME                 STATUS    MESSAGE              ERROR
+controller-manager   Healthy   ok
+scheduler            Healthy   ok
+etcd-0               Healthy   {"health": "true"}
+etcd-1               Healthy   {"health": "true"}
+```
+doesn't show etcd-1 and output is a bit different
+Output will be similar to this. It may or may not list both etcd instances, however this is OK if you verified correct installation of etcd in lab 7.
+
+install k8s using apt repos
+
+Note: In the event your cluster persists for longer than 365 days, you will need to manually approve the replacement CSR.
+kubectl get csr --kubeconfig admin.kubeconfig
+kubectl certificate approve --kubeconfig admin.kubeconfig csr-ABCD
+
+Calico, Cilium instead of weaveworks
